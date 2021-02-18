@@ -84,8 +84,8 @@ if [ $# -gt 1 ]; then
 fi
 
 # Create a common list of "<template>(<layer>)", sorted by <template>
-TEMPLATELAYERS=$(find sources -print | grep "conf/template/.*/bblayers.conf.append" |
-            sed -e "s#/bblayers\.conf\.append##g" -e "s#sources/##" |
+TEMPLATELAYERS=$(find layers -print | grep "conf/template/.*/bblayers.conf.append" |
+            sed -e "s#/bblayers\.conf\.append##g" -e "s#layers/##" |
             awk -F'/conf/template/' '{print $NF "(" $1 ")"}' | LC_ALL=C sort)
 
 # template sanity check
@@ -95,24 +95,24 @@ echo $TEMPLATELAYERS | grep -q "$TEMPLATE(.*)" || TEMPLATE="INVALID"
 variable_validation "$TEMPLATELAYERS" "TEMPLATE" || return 1
 
 TOP_DIR=$(realpath $THIS_SCRIPT_DIR)
-TEMPLATECONF=$TOP_DIR/sources/meta-suto/conf
+TEMPLATECONF=$TOP_DIR/layers/meta-suto/conf
 
-. $TOP_DIR/sources/poky/oe-init-build-env ${1-build-$TEMPLATE}
-. $TOP_DIR/sources/bitbake-bash-completion/bitbake
+. $TOP_DIR/layers/poky/oe-init-build-env ${1-build-$TEMPLATE}
+. $TOP_DIR/layers/bitbake-bash-completion/bitbake
 
 # Ensure we dont add meta-mender-demo layer into bblayers.conf
 sed -i '/meta-mender-demo/d' conf/bblayers.conf
 
 if [ "$TEMPLATE" = "nxp" ]; then
-    cp --remove-destination $TOP_DIR/sources/meta-suto/conf/template/$TEMPLATE/bblayers.conf.append conf/bblayers.$TEMPLATE.inc
-    cp --remove-destination $TOP_DIR/sources/meta-mender-community/templates/local.conf.append conf/local.conf.mender.inc
-    cp --remove-destination $TOP_DIR/sources/meta-suto/conf/template/$TEMPLATE/local.conf.append conf/local.conf.mender.$TEMPLATE.inc
-    cat $TOP_DIR/sources/meta-mender-community/meta-mender-$TEMPLATE/templates/local.conf.append >> conf/local.conf.mender.$TEMPLATE.inc
-    cat $TOP_DIR/sources/meta-mender-community/meta-mender-$TEMPLATE/templates/local-emmc.conf.append >> conf/local.conf.mender.$TEMPLATE.inc
+    cp --remove-destination $TOP_DIR/layers/meta-suto/conf/template/$TEMPLATE/bblayers.conf.append conf/bblayers.$TEMPLATE.inc
+    cp --remove-destination $TOP_DIR/layers/meta-mender-community/templates/local.conf.append conf/local.conf.mender.inc
+    cp --remove-destination $TOP_DIR/layers/meta-suto/conf/template/$TEMPLATE/local.conf.append conf/local.conf.mender.$TEMPLATE.inc
+    cat $TOP_DIR/layers/meta-mender-community/meta-mender-$TEMPLATE/templates/local.conf.append >> conf/local.conf.mender.$TEMPLATE.inc
+    cat $TOP_DIR/layers/meta-mender-community/meta-mender-$TEMPLATE/templates/local-emmc.conf.append >> conf/local.conf.mender.$TEMPLATE.inc
 elif [ "$TEMPLATE" = "qemu" ]; then
-    cp --remove-destination $TOP_DIR/sources/meta-suto/conf/template/$TEMPLATE/bblayers.conf.append conf/bblayers.$TEMPLATE.inc
-    cp --remove-destination $TOP_DIR/sources/meta-mender-community/templates/local.conf.append conf/local.conf.mender.inc
-    cp --remove-destination $TOP_DIR/sources/meta-suto/conf/template/$TEMPLATE/local.conf.append conf/local.conf.mender.$TEMPLATE.inc
+    cp --remove-destination $TOP_DIR/layers/meta-suto/conf/template/$TEMPLATE/bblayers.conf.append conf/bblayers.$TEMPLATE.inc
+    cp --remove-destination $TOP_DIR/layers/meta-mender-community/templates/local.conf.append conf/local.conf.mender.inc
+    cp --remove-destination $TOP_DIR/layers/meta-suto/conf/template/$TEMPLATE/local.conf.append conf/local.conf.mender.$TEMPLATE.inc
 else
     echo "ERROR: not supported TEMPLATE: $TEMPLATE"
     return 1
@@ -125,4 +125,4 @@ if ! echo $BB_ENV_EXTRAWHITE | grep -q "SUTO_TEMPLATE"; then
     export BB_ENV_EXTRAWHITE="$BB_ENV_EXTRAWHITE SUTO_TEMPLATE SUTO_TOP_DIR"
 fi
 
-export PATH=$TOP_DIR/sources/meta-suto/scripts:$PATH
+export PATH=$TOP_DIR/layers/meta-suto/scripts:$PATH
