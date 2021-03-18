@@ -29,8 +29,8 @@ URI: git://github.com/Freescale/meta-freescale-distro.git
 branch: dunfell
 revision: HEAD
 
-URI: git://github.com/meta-qt5/meta-qt5.git
-branch: dunfell
+URI: git://code.qt.io/yocto/meta-qt6.git
+branch: 6.1
 revision: HEAD
 
 URI: git://github.com/mendersoftware/meta-mender.git
@@ -72,7 +72,7 @@ Create an empty directory that will hold the meta-suto and Yocto source files an
 ```
 $ mkdir ~/suto-workspace
 $ cd ~/suto-workspace
-$ repo init -u TO-BE-CONTINUED/suto-manifests.git -b master
+$ repo init -u https://test-en.suto-soft.com/S332/suto-manifests.git -b master
 ```
 
 
@@ -80,17 +80,6 @@ Enter the following command to pull down the source tree to your working directo
 
 ```
 $ repo sync
-```
-
-To be noticed:
-
-Since SUTO repositories are using ssh protocol for git, you might run into a following error if your ssh command compiled with multiplexing connections support:
-| channel 2: open failed: administratively prohibited: cannot open additional channels
-| mux_client_request_session: session request failed: Session open refused by peer
-
-A valid workaround could be:
-```
-$ export GIT_SSH_COMMAND="ssh -o ControlPath=none"
 ```
 
 
@@ -101,16 +90,58 @@ Set up the environment:
 ```
 $ cd ~/suto-workspace
 $ . poky-init-build-env
-$ bitbake suto-image-x11
+$ bitbake suto-image-weston
+```
+
+or build a X11 image:
+```
+$ cd ~/suto-workspace
+$ . poky-init-build-env
+$ DISTRO=suto-x11 bitbake suto-image-x11
 ```
 
 After a successful build, the artifacts could be found in deploy directory:
 
-In ~/suto-workspace/build-variscite/tmp-glibc/deploy/images/imx6ul-var-dart
+In ~/suto-workspace/build-nxp/tmp-glibc/deploy/images/imx6ullevk
 ```
-suto-image-x11-imx6ul-var-dart.sdimg: Image could be flashed to a SDCard or EMMC device.
-suto-image-x11-imx6ul-var-dart.mender: Image could be uploaded to mender server for devices to fetch.
+suto-image-weston-imx6ullevk.wic.gz: Image (after decompressed) could be flashed to a SDCard or EMMC device.
 ```
+
+or for qemuarm:
+In ~/suto-workspace/build-qemu/tmp-glibc/deploy/images/qemuarm
+```
+suto-image-weston-qemuarm.wic: Image could be launched in qemu.
+```
+
+
+# Connect to the device
+
+Both nxp and qemuarm machines support SSH and VNC connections for debug
+
+For qemuarm:
+
+Start qemu machine:
+
+```
+$ runqemu qemuarm
+```
+
+Connect to qemu machine by SSH:
+
+```
+$ ssh root@192.168.7.2
+```
+
+Connect to qemu machine by VNC:
+
+```
+$ xtightvncviewer 127.0.0.1
+```
+
+For nxp machine:
+
+Same with qemuarm, but change the connection address to the IP of the target.
+
 
 
 # Set up SUTO SDK (On any Linux distributions, Debian, Ubuntu, Fedora, Readhat, ArchLinux...)
@@ -118,13 +149,13 @@ suto-image-x11-imx6ul-var-dart.mender: Image could be uploaded to mender server 
 Build SDK:
 
 ```
-$ bitbake suto-image-x11 -c populate_sdk
+$ bitbake suto-image-weston -c populate_sdk
 ```
 
 Install SDK:
 
 ```
-$ ~/suto-workspace/build-variscite/tmp-glibc/deploy/sdk/oecore-x86_64-cortexa7t2hf-neon-toolchain-suto.0.sh -y -d ~/suto-sdk
+$ ~/suto-workspace/build-nxp/tmp-glibc/deploy/sdk/oecore-x86_64-cortexa7t2hf-neon-toolchain-suto.0.sh -y -d ~/suto-sdk
 ```
 
 Set up SDK:
@@ -134,7 +165,7 @@ $ unset LD_LIBRARY_PATH
 $ source ~/suto-sdk/environment-setup-cortexa7t2hf-neon-suto-linux-gnueabi
 ```
 
-Now you have CC, CXX, CPP, CFLAGS, CXXFLAGS, LDFALGS in your environment:
+Now you have CC, CXX, CPP, CFLAGS, CXXFLAGS, LDFALGS, qt-cmake in your environment:
 
 ```
 $ $CXX --version
@@ -144,5 +175,14 @@ This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ```
 
+Build a QT6 project within SDK
+
+```
+$ git clone git://code.qt.io/qt/qtbase.git
+$ cd qtbase
+$ git checkout -b 6.1 origin/6.1
+$ cd examples/widgets/animation
+$ qt-cmake
+```
 
 Layer Maintainer: [Ming Liu](<mailto:liu.ming50@gmail.com>)

@@ -1,0 +1,4 @@
+define KFEATURE_DESCRIPTION "Enale FAT/VFAT filesystems"
+define KFEATURE_COMPATIBILITY board
+
+kconf non-hardware vfat.cfg

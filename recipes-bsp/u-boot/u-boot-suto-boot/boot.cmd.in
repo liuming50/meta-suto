@@ -1,0 +1,3 @@
+setenv bootargs 'quiet logo.nologo vt.global_cursor_default=0 plymouth.ignore-serial-consoles splash ${bootargs}'
+ext4load mmc 0:2 ${ramdisk_addr_r} /boot/fitImage
+bootm ${ramdisk_addr_r}#conf@${fdt_file}

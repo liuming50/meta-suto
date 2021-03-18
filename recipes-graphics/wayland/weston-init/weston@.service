@@ -1,0 +1,16 @@
+[Unit]
+Description=Weston Wayland Compositor
+RequiresMountsFor=/run
+#Conflicts=plymouth-quit.service
+#After=plymouth-quit-wait.service
+
+[Service]
+EnvironmentFile=-/etc/default/weston
+StandardError=journal
+Type=oneshot
+RemainAfterExit=yes
+
+ExecStart=/usr/bin/weston-start
+
+[Install]
+WantedBy=multi-user.target

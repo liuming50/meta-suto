@@ -1,0 +1,9 @@
+#!/bin/sh
+
+export XDG_RUNTIME_DIR=/run/user/`id -u root`
+if ! test -d "$XDG_RUNTIME_DIR"; then
+	mkdir --parents $XDG_RUNTIME_DIR
+	chmod 0700 $XDG_RUNTIME_DIR
+fi
+
+/usr/bin/weston --tty=2 --log=@LOCALSTATEDIR@/log/weston.log &

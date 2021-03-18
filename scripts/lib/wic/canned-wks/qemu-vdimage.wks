@@ -1,0 +1,2 @@
+part /boot --source bootimg-partition --ondisk vda --fstype=vfat --label boot --active --align 4 --size 16
+part / --source rootfs --ondisk vda --fstype=ext4 --mkfs-extraopts="-O ^64bit,^metadata_csum -i 4096 -b 4096" --label root --align 4

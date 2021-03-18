@@ -1,0 +1,46 @@
+From 57105a336d8c53324152878b53b2dc3851552df3 Mon Sep 17 00:00:00 2001
+From: Ming Liu <ming.liu@toradex.com>
+Date: Mon, 14 Sep 2020 09:43:15 +0200
+Subject: [PATCH] screen-share: auto enable screen share on startup
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Ming Liu <ming.liu@toradex.com>
+---
+ compositor/screen-share.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/compositor/screen-share.c b/compositor/screen-share.c
+index 8c37452..ca51e6d 100644
+--- a/compositor/screen-share.c
++++ b/compositor/screen-share.c
+@@ -1162,6 +1162,7 @@ WL_EXPORT int
+ wet_module_init(struct weston_compositor *compositor,
+ 		int *argc, char *argv[])
+ {
++	struct weston_output *output;
+ 	struct screen_share *ss;
+ 	struct weston_config *config;
+ 	struct weston_config_section *section;
+@@ -1180,5 +1181,19 @@ wet_module_init(struct weston_compositor *compositor,
+ 	weston_compositor_add_key_binding(compositor, KEY_S,
+ 				          MODIFIER_CTRL | MODIFIER_ALT,
+ 					  share_output_binding, ss);
++
++	/* If WAYLAND_SERVER_SOCKET is set this is the screen-share instance */
++	if (getenv("WAYLAND_SERVER_SOCKET") != NULL)
++		return 0;
++
++	output = weston_output_find(compositor,
++				    wl_fixed_to_int(0),
++				    wl_fixed_to_int(0));
++	if (!output) {
++		weston_log("Cannot pick output: Pointer not on any output\n");
++		return;
++	}
++
++	weston_output_share(output, ss->command);
+ 	return 0;
+ }
+-- 
+2.28.0
+

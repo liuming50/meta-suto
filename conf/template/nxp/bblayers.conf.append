@@ -1,0 +1,5 @@
+BBLAYERS += " \
+    ${SUTO_TOP_DIR}/layers/meta-freescale \
+    ${SUTO_TOP_DIR}/layers/meta-freescale-3rdparty \
+    ${SUTO_TOP_DIR}/layers/meta-freescale-distro \
+"

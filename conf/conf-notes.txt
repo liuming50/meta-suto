@@ -1,0 +1,33 @@
+
+----------------------------------------------------------------
+ ____  _   _ _____ ___   __   __         _        
+/ ___|| | | |_   _/ _ \  \ \ / /__   ___| |_ ___  
+\___ \| | | | | || | | |  \ V / _ \ / __| __/ _ \ 
+ ___) | |_| | | || |_| |   | | (_) | (__| || (_) |
+|____/ \___/  |_| \___/    |_|\___/ \___|\__\___/ 
+
+----------------------------------------------------------------
+
+Common targets are:
+    suto-image-weston
+
+You can run bitbake as follows to build a specific image:
+    bitbake suto-image-weston
+
+
+#### For qemu machine ####
+
+Start qemu test machine:
+    runqemu qemuarm
+
+Connect to qemu virtual machine by VNC:
+    xtightvncviewer 127.0.0.1
+
+
+#### For NXP machine ####
+
+Power on the NXP machine.
+
+Connect to it by VNC:
+    xtightvncviewer IP-OF-THE-BOARD
+

@@ -74,7 +74,7 @@ else
 fi
 
 if [ "$(whoami)" = "root" ]; then
-    echo "ERROR: do not build Boatrax as root. Exiting..." >&2
+    echo "ERROR: do not build SUTO Yocto as root. Exiting..." >&2
     return 1
 fi
 
@@ -100,23 +100,8 @@ TEMPLATECONF=$TOP_DIR/layers/meta-suto/conf
 . $TOP_DIR/layers/poky/oe-init-build-env ${1-build-$TEMPLATE}
 . $TOP_DIR/layers/bitbake-bash-completion/bitbake
 
-# Ensure we dont add meta-mender-demo layer into bblayers.conf
-sed -i '/meta-mender-demo/d' conf/bblayers.conf
-
-if [ "$TEMPLATE" = "nxp" ]; then
-    cp --remove-destination $TOP_DIR/layers/meta-suto/conf/template/$TEMPLATE/bblayers.conf.append conf/bblayers.$TEMPLATE.inc
-    cp --remove-destination $TOP_DIR/layers/meta-mender-community/templates/local.conf.append conf/local.conf.mender.inc
-    cp --remove-destination $TOP_DIR/layers/meta-suto/conf/template/$TEMPLATE/local.conf.append conf/local.conf.mender.$TEMPLATE.inc
-    cat $TOP_DIR/layers/meta-mender-community/meta-mender-$TEMPLATE/templates/local.conf.append >> conf/local.conf.mender.$TEMPLATE.inc
-    cat $TOP_DIR/layers/meta-mender-community/meta-mender-$TEMPLATE/templates/local-emmc.conf.append >> conf/local.conf.mender.$TEMPLATE.inc
-elif [ "$TEMPLATE" = "qemu" ]; then
-    cp --remove-destination $TOP_DIR/layers/meta-suto/conf/template/$TEMPLATE/bblayers.conf.append conf/bblayers.$TEMPLATE.inc
-    cp --remove-destination $TOP_DIR/layers/meta-mender-community/templates/local.conf.append conf/local.conf.mender.inc
-    cp --remove-destination $TOP_DIR/layers/meta-suto/conf/template/$TEMPLATE/local.conf.append conf/local.conf.mender.$TEMPLATE.inc
-else
-    echo "ERROR: not supported TEMPLATE: $TEMPLATE"
-    return 1
-fi
+cp --remove-destination $TOP_DIR/layers/meta-suto/conf/template/$TEMPLATE/bblayers.conf.append conf/bblayers.$TEMPLATE.inc
+cp --remove-destination $TOP_DIR/layers/meta-suto/conf/template/$TEMPLATE/local.conf.append conf/local.conf.$TEMPLATE.inc
 
 export SUTO_TEMPLATE=$TEMPLATE
 export SUTO_TOP_DIR=$TOP_DIR

@@ -1,0 +1,4 @@
+if test "${saveenv_canary}" != "1"; then setenv saveenv_canary 1; saveenv; fi
+setenv bootargs "console=ttyAMA0 root=/dev/vda2 rootfstype=ext4 rootwait rw quiet logo.nologo vt.global_cursor_default=0 plymouth.ignore-serial-consoles splash"
+ext4load virtio 0:2 ${ramdisk_addr_r} /boot/fitImage
+bootm ${ramdisk_addr_r}#conf@ ${ramdisk_addr_r}#conf@ ${fdt_addr}
